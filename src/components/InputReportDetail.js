@@ -16,21 +16,20 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-const InputReportDetail = ({ setNReporte, nReporte }) => {
+const InputReportDetail = ({
+  reporte,
+  setNumeroReporte,
+  setRucCliente,
+  setNombreCliente,
+  setNombreIngeniero,
+  setFechaServicio,
+  setProblemaReportado,
+  setCertificadoPrueba,
+  setPersonaContacto,
+}) => {
   console.log('InputReportDetail');
   const classes = useStyles();
 
-  const [
-    reporte,
-    setNumeroReporte,
-    setRucCliente,
-    setNombreCliente,
-    setNombreIngeniero,
-    setFechaServicio,
-    setProblemaReportado,
-    setCertificadoPrueba,
-    setPersonaContacto,
-  ] = DetailReportState();
   return (
     <form className={classes.root} noValidate autoComplete="off">
       <TextField
@@ -49,7 +48,7 @@ const InputReportDetail = ({ setNReporte, nReporte }) => {
 
       <TextField
         required
-        id="outlined-basic"
+        id="outlined-basiSc"
         label="Numero de Ruc"
         placeholder="20202022"
         value={reporte.rucCliente}
@@ -102,8 +101,8 @@ const InputReportDetail = ({ setNReporte, nReporte }) => {
         id="outlined-basic"
         variant="outlined"
         label="Problema Reportado"
-        value={reporte.nombreCliente}
-        onChange={(e) => setNombreCliente(e.target.value)}
+        value={reporte.problemaReportado}
+        onChange={(e) => setProblemaReportado(e.target.value)}
         InputLabelProps={{
           shrink: true,
         }}

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
@@ -6,8 +6,11 @@ import { Button } from '@material-ui/core';
 import YellowButton from './YellowButton';
 import DeviceAdded from './DeviceAdded';
 import EditorJs from 'react-editor-js';
-
 import { EDITOR_JS_TOOLS } from '../assets/constants';
+// import edjsHTML from 'editorjs-html ';
+const editorjsHTML = require('editorjs-html');
+const edjsParser = editorjsHTML();
+console.log(edjsParser);
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -28,12 +31,18 @@ const useStyles = makeStyles((theme) => ({
 
 const InsertEquipoDetail = () => {
   let data = {};
-  const instanceRef = useRef(null);
-  async function handleSave() {
-    const savedData = await instanceRef.current.save();
-    console.log(savedData, 'Saved Data');
-  }
-  console.log('Add Equipos');
+  const editorJsRef = React.useRef(null);
+  const handleSave = React.useCallback(async () => {
+    try {
+      const savedData = await editorJsRef.current.save();
+      console.log('data', edjsParser.parse(savedData));
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {});
+
   const classes = useStyles();
   return (
     <InputDeviceWrapper>
@@ -74,7 +83,13 @@ const InsertEquipoDetail = () => {
           <DeviceAdded />
         </DevicesWrapper>
         <EditorJsWrapper>
-          <EditorJs tools={EDITOR_JS_TOOLS} data={data} id="EditorJs" />
+          <button onClick={handleSave}>Save !</button>
+          <EditorJs
+            instanceRef={(instance) => (editorJsRef.current = instance)}
+            tools={EDITOR_JS_TOOLS}
+            data={data}
+            id="EditorJs"
+          />
         </EditorJsWrapper>
       </MainWrapper>
     </InputDeviceWrapper>

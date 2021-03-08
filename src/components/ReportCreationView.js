@@ -7,12 +7,24 @@ import InputReportDetail from './InputReportDetail';
 import { useRouteMatch, Switch, Route } from 'react-router-dom';
 import InsertEquipoDetail from './InsertEquipoDetail';
 import ReportCreationTabs from './ReportCreationTabs';
+import DetailReportState from './hooks/DetailReportState';
 const ReportCreationView = () => {
   console.log(useRouteMatch());
 
   const { path, url } = useRouteMatch();
   const [selectedTab, setSelectedTab] = React.useState(0);
   const [nReporte, setNReporte] = React.useState('');
+  const [
+    reporte,
+    setNumeroReporte,
+    setRucCliente,
+    setNombreCliente,
+    setNombreIngeniero,
+    setFechaServicio,
+    setProblemaReportado,
+    setCertificadoPrueba,
+    setPersonaContacto,
+  ] = DetailReportState();
   console.log(nReporte, 'Numero Reporte');
   return (
     <Wrapper>
@@ -31,7 +43,17 @@ const ReportCreationView = () => {
           </Switch> */}
 
           {selectedTab === 0 && (
-            <InputReportDetail nReporte={nReporte} setNReporte={setNReporte} />
+            <InputReportDetail
+              reporte={reporte}
+              setNumeroReporte={setNumeroReporte}
+              setRucCliente={setRucCliente}
+              setNombreCliente={setNombreCliente}
+              setNombreIngeniero={setNombreIngeniero}
+              setFechaServicio={setFechaServicio}
+              setProblemaReportado={setProblemaReportado}
+              setCertificadoPrueba={setCertificadoPrueba}
+              setPersonaContacto={setPersonaContacto}
+            />
           )}
           {selectedTab === 1 && <InsertEquipoDetail />}
         </InputArea>
