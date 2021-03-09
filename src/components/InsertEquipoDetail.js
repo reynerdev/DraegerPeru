@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
@@ -7,10 +7,9 @@ import YellowButton from './YellowButton';
 import DeviceAdded from './DeviceAdded';
 import EditorJs from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from '../assets/constants';
-// import edjsHTML from 'editorjs-html ';
+import { TYPES } from './reducer/EquiposReducer';
 const editorjsHTML = require('editorjs-html');
 const edjsParser = editorjsHTML();
-console.log(edjsParser);
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -29,9 +28,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InsertEquipoDetail = () => {
-  let data = {};
+const InsertEquipoDetail = ({ equipos, dispatch }) => {
+  const data = {};
   const editorJsRef = React.useRef(null);
+  const [numeroParteInput, setNumeroParteInput] = useState('');
+  const [numeroSerieInput, setNumeroSerieInput] = useState('');
+  const [nombreEquipo, setNombreEquipo] = useState('');
   const handleSave = React.useCallback(async () => {
     try {
       const savedData = await editorJsRef.current.save();
@@ -41,7 +43,22 @@ const InsertEquipoDetail = () => {
     }
   }, []);
 
-  useEffect(() => {});
+  useEffect(() => {
+    console.log(equipos, numeroParteInput, numeroSerieInput, nombreEquipo, '');
+  });
+
+  const handleInsertarEquipo = () => {
+    console.log('handleInsertarEquipo');
+    dispatch({
+      type: TYPES.add,
+      payload: {
+        nombreEquipo: nombreEquipo,
+        numeroSerie: numeroSerieInput,
+        numeroParte: numeroParteInput,
+      },
+    });
+    return false;
+  };
 
   const classes = useStyles();
   return (
@@ -52,6 +69,22 @@ const InsertEquipoDetail = () => {
           id="outlined-basic"
           label="Numero de Parte"
           placeholder="8321373"
+          value={numeroParteInput}
+          onChange={(e) => setNumeroParteInput(e.target.value)}
+          margin="normal"
+          variant="outlined"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+
+        <TextField
+          required
+          id="outlined-basic"
+          label="Nombre Equipo"
+          placeholder="X-am 5600"
+          value={nombreEquipo}
+          onChange={(e) => setNombreEquipo(e.target.value)}
           margin="normal"
           variant="outlined"
           InputLabelProps={{
@@ -63,24 +96,27 @@ const InsertEquipoDetail = () => {
           required
           id="outlined-basic"
           label="Numero de Serie"
+          value={numeroSerieInput}
+          onChange={(e) => setNumeroSerieInput(e.target.value)}
           placeholder="ARKA-1212"
           variant="outlined"
           InputLabelProps={{
             shrink: true,
           }}
         />
-        <YellowButton>Ingresar Equipos</YellowButton>
+
+        <YellowButton type="button" onClick={handleInsertarEquipo}>
+          Ingresar Equipo
+        </YellowButton>
         <YellowButton>Cargar Firma</YellowButton>
         <YellowButton>Generar PDF</YellowButton>
       </form>
-
+      <button onClick={handleInsertarEquipo}>click</button>
       <MainWrapper>
         <DevicesWrapper>
-          <DeviceAdded />
-          <DeviceAdded />
-          <DeviceAdded />
-          <DeviceAdded />
-          <DeviceAdded />
+          {equipos.map((element, index) => (
+            <DeviceAdded element={element} index={index} />
+          ))}
         </DevicesWrapper>
         <EditorJsWrapper>
           <button onClick={handleSave}>Save !</button>

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const DetailReportState = () => {
   const [reporte, setReport] = useState({
     numeroReporte: '',
-    rucCliente: 'w',
+    rucCliente: '',
     nombreCliente: '',
     nombreIngeniero: '',
     fechaServicio: '',

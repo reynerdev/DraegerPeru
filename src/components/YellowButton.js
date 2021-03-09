@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
 const YellowButton = ({ children }) => {
   const classes = useStyles();
   return (
-    <Button classes={{ root: classes.root }} variant="contained">
+    <Button type="button" classes={{ root: classes.root }} variant="contained">
       {children}
     </Button>
   );

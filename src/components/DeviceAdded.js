@@ -61,7 +61,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const DeviceAdded = React.memo(function TutorCard() {
+export const DeviceAdded = React.memo(function TutorCard({ element, index }) {
   const styles = useStyles();
   const iconBtnStyles = useSizedIconButtonStyles({
     padding: 6,
@@ -85,11 +85,11 @@ export const DeviceAdded = React.memo(function TutorCard() {
         /> */}
         <SettingsCellIcon fontSize="large" />
       </Item>
-      <Item className={styles.numberItem}>1</Item>
+      <Item className={styles.numberItem}>{element.index}</Item>
 
       <Info position={'middle'} useStyles={useTutorInfoStyles}>
-        <InfoTitle>X-am 5600</InfoTitle>
-        <InfoSubtitle>ARKO-1231</InfoSubtitle>
+        <InfoTitle>{element.nombreEquipo}</InfoTitle>
+        <InfoSubtitle>{element.numeroSerie}</InfoSubtitle>
       </Info>
       <Item ml={1} position={'middle'} className={styles.item}>
         <IconButton className={styles.actionAdd} classes={iconBtnStyles}>

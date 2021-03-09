@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@material-ui/core';
-import React from 'react';
+import React, { useReducer } from 'react';
 import styled from 'styled-components';
 import ReportCreationBreadCrumb from './ReportCreationBreadCrumb';
 import Logo from '../assets/Logo.svg';
@@ -8,6 +8,8 @@ import { useRouteMatch, Switch, Route } from 'react-router-dom';
 import InsertEquipoDetail from './InsertEquipoDetail';
 import ReportCreationTabs from './ReportCreationTabs';
 import DetailReportState from './hooks/DetailReportState';
+import EquiposReducer from './reducer/EquiposReducer';
+
 const ReportCreationView = () => {
   console.log(useRouteMatch());
 
@@ -25,6 +27,9 @@ const ReportCreationView = () => {
     setCertificadoPrueba,
     setPersonaContacto,
   ] = DetailReportState();
+
+  const [equipos, dispatch] = useReducer(EquiposReducer, []);
+
   console.log(nReporte, 'Numero Reporte');
   return (
     <Wrapper>
@@ -55,7 +60,9 @@ const ReportCreationView = () => {
               setPersonaContacto={setPersonaContacto}
             />
           )}
-          {selectedTab === 1 && <InsertEquipoDetail />}
+          {selectedTab === 1 && (
+            <InsertEquipoDetail equipos={equipos} dispatch={dispatch} />
+          )}
         </InputArea>
       </InsideWrapper>
     </Wrapper>
