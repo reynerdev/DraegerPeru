@@ -61,13 +61,37 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const DeviceAdded = React.memo(function TutorCard({ element, index }) {
+export const DeviceAdded = React.memo(function TutorCard({
+  element,
+  index,
+  handleDeleteEquipo,
+  setOpenEditor,
+  setCurrentIndex,
+  equipos,
+  setData,
+  instanceRef,
+}) {
   const styles = useStyles();
   const iconBtnStyles = useSizedIconButtonStyles({
     padding: 6,
     boxShadow: '0px 3px 6px rgba(0,0,0.16)',
   });
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
+
+  const handleOpenEditor = () => {
+    if (instanceRef.current) {
+      instanceRef.current.destroy();
+    }
+
+    instanceRef.current.render(equipos[index].content);
+
+    console.log(equipos, 'Handle');
+    setData(equipos[index].content);
+    setCurrentIndex(index);
+    setOpenEditor(true);
+    // setOpenEditor(false);
+    // setOpenEditor((preval) => !preval);
+  };
   return (
     <Row
       p={1.5}
@@ -75,6 +99,7 @@ export const DeviceAdded = React.memo(function TutorCard({ element, index }) {
       bgcolor={'#FFFF'}
       borderRadius={16}
       className={styles.row}
+      onClick={handleOpenEditor}
     >
       <Item position={'middle'} className={styles.icon}>
         {/* <Avatar
@@ -85,17 +110,25 @@ export const DeviceAdded = React.memo(function TutorCard({ element, index }) {
         /> */}
         <SettingsCellIcon fontSize="large" />
       </Item>
-      <Item className={styles.numberItem}>{element.index}</Item>
+      <Item className={styles.numberItem}>{index}</Item>
 
       <Info position={'middle'} useStyles={useTutorInfoStyles}>
         <InfoTitle>{element.nombreEquipo}</InfoTitle>
         <InfoSubtitle>{element.numeroSerie}</InfoSubtitle>
       </Info>
       <Item ml={1} position={'middle'} className={styles.item}>
-        <IconButton className={styles.actionAdd} classes={iconBtnStyles}>
+        <IconButton
+          onClick={handleOpenEditor}
+          className={styles.actionAdd}
+          classes={iconBtnStyles}
+        >
           <Add />
         </IconButton>
-        <IconButton className={styles.actionDelete} classes={iconBtnStyles}>
+        <IconButton
+          onClick={() => handleDeleteEquipo(index)}
+          className={styles.actionDelete}
+          classes={iconBtnStyles}
+        >
           <CloseSharpIcon fontSize="small" />
         </IconButton>
       </Item>

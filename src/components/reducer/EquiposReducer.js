@@ -1,3 +1,6 @@
+const editorjsHTML = require('editorjs-html');
+const edjsParser = editorjsHTML();
+
 const TYPES = {
   add: 'add',
   remove: 'remove',
@@ -5,20 +8,32 @@ const TYPES = {
 };
 
 const EquiposReducer = (state, action) => {
+  console.log('Reducer');
   switch (action.type) {
-    case TYPES.ADD: {
+    case TYPES.add: {
+      console.log('ADD');
       return [...state, action.payload];
     }
 
+    // case TYPES.remove: {
+    //   return state.filter((element) => element !== action.payload.id);
+    // }
     case TYPES.remove: {
-      return state.filter((element) => element !== action.payload.id);
+      const oldState = state;
+
+      oldState.splice(action.payload.index, 1);
+      console.log(oldState, action.payload.index);
+      return [...oldState];
     }
 
     case TYPES.addText: {
+      console.log('state in reducer', state);
       const oldState = state;
 
-      oldState[action.id].content = action.payload.content;
-
+      oldState[action.payload.index].content = action.payload.content;
+      // oldState[action.payload.index].contentHTML = edjsParser.parse(
+      //   action.payload.content
+      // );
       return [...oldState];
     }
     default:

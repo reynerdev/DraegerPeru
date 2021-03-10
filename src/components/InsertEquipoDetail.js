@@ -8,6 +8,7 @@ import DeviceAdded from './DeviceAdded';
 import EditorJs from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from '../assets/constants';
 import { TYPES } from './reducer/EquiposReducer';
+import ReactEditorV2 from './ReactEditorV2';
 const editorjsHTML = require('editorjs-html');
 const edjsParser = editorjsHTML();
 const useStyles = makeStyles((theme) => ({
@@ -29,38 +30,68 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InsertEquipoDetail = ({ equipos, dispatch }) => {
-  const data = {};
   const editorJsRef = React.useRef(null);
   const [numeroParteInput, setNumeroParteInput] = useState('');
   const [numeroSerieInput, setNumeroSerieInput] = useState('');
   const [nombreEquipo, setNombreEquipo] = useState('');
-  const handleSave = React.useCallback(async () => {
-    try {
-      const savedData = await editorJsRef.current.save();
-      console.log('data', edjsParser.parse(savedData));
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  const [openEditor, setOpenEditor] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [data, setData] = useState({});
+  // const handleSave = React.useCallback(async () => {
+  //   try {
+  //     const savedData = await editorJsRef.current.save();
+  //     console.log('data', edjsParser.parse(savedData));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, []);
+
+  const handleOnChangeEditor = async (newData) => {
+    console.log('HandleOnChangeEditor');
+    const saveData = await newData.saver.save();
+    console.log(saveData);
+    dispatch({
+      type: TYPES.addText,
+      payload: {
+        index: currentIndex,
+        content: newData.saver.save(),
+      },
+    });
+  };
 
   useEffect(() => {
-    console.log(equipos, numeroParteInput, numeroSerieInput, nombreEquipo, '');
+    console.log('INSERTEQUIPODETAIL');
+    console.log('reference', editorJsRef);
   });
 
   const handleInsertarEquipo = () => {
     console.log('handleInsertarEquipo');
+    console.log(dispatch);
     dispatch({
       type: TYPES.add,
       payload: {
         nombreEquipo: nombreEquipo,
         numeroSerie: numeroSerieInput,
         numeroParte: numeroParteInput,
+        content: {},
       },
     });
-    return false;
+  };
+
+  const handleDeleteEquipo = (index) => {
+    dispatch({
+      type: TYPES.remove,
+      payload: {
+        index: index,
+      },
+    });
   };
 
   const classes = useStyles();
+
+  function handleChangeReact({ name, holder, onChange }) {
+    // console.log(newD)
+  }
   return (
     <InputDeviceWrapper>
       <form className={classes.root} noValidate autoComplete="off">
@@ -115,18 +146,37 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
       <MainWrapper>
         <DevicesWrapper>
           {equipos.map((element, index) => (
-            <DeviceAdded element={element} index={index} />
+            <DeviceAdded
+              element={element}
+              key={index}
+              index={index}
+              handleDeleteEquipo={handleDeleteEquipo}
+              setOpenEditor={setOpenEditor}
+              setCurrentIndex={setCurrentIndex}
+              setData={setData}
+              equipos={equipos}
+              instanceRef={editorJsRef}
+            />
           ))}
         </DevicesWrapper>
-        <EditorJsWrapper>
-          <button onClick={handleSave}>Save !</button>
-          <EditorJs
-            instanceRef={(instance) => (editorJsRef.current = instance)}
+
+        {openEditor && (
+          <EditorJsWrapper>
+            {/* <button onClick={handleSave}>Save !</button> */}
+            {/* <EditorJs
             tools={EDITOR_JS_TOOLS}
+            // enableReInitialize={true}
+            onChange={handleOnChangeEditor}
+            onCompareBlocks={(newData, oldData) => newData === oldData} // I recommend react-fast-compare
             data={data}
-            id="EditorJs"
-          />
-        </EditorJsWrapper>
+          ></EditorJs> */}
+            <ReactEditorV2
+              data={data}
+              handleOnChangeEditor={handleOnChangeEditor}
+              instanceRef={editorJsRef}
+            />
+          </EditorJsWrapper>
+        )}
       </MainWrapper>
     </InputDeviceWrapper>
   );
