@@ -79,16 +79,27 @@ export const DeviceAdded = React.memo(function TutorCard({
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
 
   const handleOpenEditor = () => {
-    if (instanceRef.current) {
-      instanceRef.current.destroy();
-    }
+    // setOpenEditor(true);
 
-    instanceRef.current.render(equipos[index].content);
+    // if (!instanceRef.current){
+
+    // }
+
+    // setOpenEditor((state) => {
+    //   instanceRef.current.render(equipos[index].content);
+
+    //   return true;
+    // });
+    // if (instanceRef.current) {
+    //   instanceRef.current.destroy();
+    // }
+
+    // instanceRef.current.render(equipos[index].content);
 
     console.log(equipos, 'Handle');
-    setData(equipos[index].content);
+    // setData(equipos[index].content);
     setCurrentIndex(index);
-    setOpenEditor(true);
+    // setOpenEditor(true);
     // setOpenEditor(false);
     // setOpenEditor((preval) => !preval);
   };

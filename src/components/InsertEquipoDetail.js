@@ -49,20 +49,57 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   const handleOnChangeEditor = async (newData) => {
     console.log('HandleOnChangeEditor');
     const saveData = await newData.saver.save();
-    console.log(saveData);
+    console.log(saveData, 'saveData');
     dispatch({
       type: TYPES.addText,
       payload: {
         index: currentIndex,
-        content: newData.saver.save(),
+        content: saveData,
       },
     });
   };
 
   useEffect(() => {
+    setOpenEditor(true);
     console.log('INSERTEQUIPODETAIL');
-    console.log('reference', editorJsRef);
-  });
+    console.log('reference', editorJsRef.current);
+    // console.log(editorJsRef.current.render, equipos, currentIndex);
+    if (!!editorJsRef.current) {
+      console.log(equipos[currentIndex].content, 'CONTENIDO');
+      const render = {
+        blocks: !!equipos[currentIndex].content.blocks
+          ? []
+          : equipos[currentIndex].content.blocks,
+      };
+      console.log(render, 'RENDER');
+      // editorJsRef.current.render({
+      //   blocks: [
+      //     {
+      //       type: 'paragraph',
+      //       data: {
+      //         text:
+      //           'The example of text that was written in <b>one of popular</b> text editors.',
+      //       },
+      //     },
+      //     {
+      //       type: 'header',
+      //       data: {
+      //         text: 'With the header of course',
+      //         level: 2,
+      //       },
+      //     },
+      //     {
+      //       type: 'paragraph',
+      //       data: {
+      //         text: 'So what do we have?',
+      //       },
+      //     },
+      //   ],
+      // });
+
+      editorJsRef.current.render(render);
+    }
+  }, [currentIndex]);
 
   const handleInsertarEquipo = () => {
     console.log('handleInsertarEquipo');
