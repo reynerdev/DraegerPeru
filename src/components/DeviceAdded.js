@@ -136,7 +136,10 @@ export const DeviceAdded = React.memo(function TutorCard({
           <Add />
         </IconButton>
         <IconButton
-          onClick={() => handleDeleteEquipo(index)}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDeleteEquipo(index);
+          }}
           className={styles.actionDelete}
           classes={iconBtnStyles}
         >

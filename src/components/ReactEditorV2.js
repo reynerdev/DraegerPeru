@@ -11,6 +11,7 @@ const ReactEditorV2 = ({ data, handleOnChangeEditor, instanceRef }) => {
       onChange={handleOnChangeEditor}
       onCompareBlocks={(newData, oldData) => newData === oldData} // I recommend react-fast-compare
       data={data}
+      //   autofocus={true}
     >
       <div id={'editorjs'} />
     </EditorJs>

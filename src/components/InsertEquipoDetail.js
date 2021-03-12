@@ -9,6 +9,7 @@ import EditorJs from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from '../assets/constants';
 import { TYPES } from './reducer/EquiposReducer';
 import ReactEditorV2 from './ReactEditorV2';
+import { TrendingUpOutlined } from '@material-ui/icons';
 const editorjsHTML = require('editorjs-html');
 const edjsParser = editorjsHTML();
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +38,7 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   const [openEditor, setOpenEditor] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [data, setData] = useState({});
+  const firstUpdate = useRef(true);
   // const handleSave = React.useCallback(async () => {
   //   try {
   //     const savedData = await editorJsRef.current.save();
@@ -60,45 +62,62 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   };
 
   useEffect(() => {
-    setOpenEditor(true);
-    console.log('INSERTEQUIPODETAIL');
-    console.log('reference', editorJsRef.current);
-    // console.log(editorJsRef.current.render, equipos, currentIndex);
-    if (!!editorJsRef.current) {
-      console.log(equipos[currentIndex].content, 'CONTENIDO');
-      const render = {
-        blocks: !!equipos[currentIndex].content.blocks
-          ? []
-          : equipos[currentIndex].content.blocks,
-      };
-      console.log(render, 'RENDER');
-      // editorJsRef.current.render({
-      //   blocks: [
-      //     {
-      //       type: 'paragraph',
-      //       data: {
-      //         text:
-      //           'The example of text that was written in <b>one of popular</b> text editors.',
-      //       },
-      //     },
-      //     {
-      //       type: 'header',
-      //       data: {
-      //         text: 'With the header of course',
-      //         level: 2,
-      //       },
-      //     },
-      //     {
-      //       type: 'paragraph',
-      //       data: {
-      //         text: 'So what do we have?',
-      //       },
-      //     },
-      //   ],
-      // });
+    if (!firstUpdate.current) {
+      setOpenEditor(false);
+      console.log('INSERTEQUIPODETAIL');
+      console.log('reference', editorJsRef.current);
 
-      editorJsRef.current.render(render);
+      console.log(editorJsRef.current.isReady);
+      editorJsRef.current.isReady.then(() =>
+        console.log('isReady', editorJsRef.current)
+      );
+
+      firstUpdate.current = false;
+    } else {
+      editorJsRef.current.isReady.then(() => {
+        editorJsRef.current.destroy();
+      });
+      setOpenEditor(true);
     }
+
+    // console.log(editorJsRef.current.render, equipos, currentIndex);
+    // if (!!editorJsRef.current) {
+    //   console.log(equipos[currentIndex].content, 'CONTENIDO');
+    //   const render = {
+    //     blocks: !equipos[currentIndex].content.blocks
+    //       ? []
+    //       : equipos[currentIndex].content.blocks,
+    //   };
+    //   console.log(render, 'RENDER');
+    //   // editorJsRef.current.render({
+    //   //   blocks: [
+    //   //     {
+    //   //       type: 'paragraph',
+    //   //       data: {
+    //   //         text:
+    //   //           'The example of text that was written in <b>one of popular</b> text editors.',
+    //   //       },
+    //   //     },
+    //   //     {
+    //   //       type: 'header',
+    //   //       data: {
+    //   //         text: 'With the header of course',
+    //   //         level: 2,
+    //   //       },
+    //   //     },
+    //   //     {
+    //   //       type: 'paragraph',
+    //   //       data: {
+    //   //         text: 'So what do we have?',
+    //   //       },
+    //   //     },
+    //   //   ],
+    //   // });
+    //   console.log(editorJsRef.current.render, 'What is the render funcion');
+
+    //   editorJsRef.current.render(render);
+    //   editorJsRef.current.focus(true);
+    // }
   }, [currentIndex]);
 
   const handleInsertarEquipo = () => {
@@ -197,8 +216,8 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
           ))}
         </DevicesWrapper>
 
-        {openEditor && (
-          <EditorJsWrapper>
+        {true && (
+          <EditorJsWrapper style={{ display: openEditor ? 'block' : 'none' }}>
             {/* <button onClick={handleSave}>Save !</button> */}
             {/* <EditorJs
             tools={EDITOR_JS_TOOLS}
