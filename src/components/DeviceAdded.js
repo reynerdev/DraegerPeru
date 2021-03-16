@@ -35,6 +35,7 @@ const useStyles = makeStyles(() => ({
   row: {
     boxShadow: '0 1px 4px 0 rgba(0,0,0,0.12)',
     marginBottom: '32px',
+    // pointerEvents: 'none',
   },
 
   item: {
@@ -70,6 +71,7 @@ export const DeviceAdded = React.memo(function TutorCard({
   equipos,
   setData,
   instanceRef,
+  indexSelectedRef,
 }) {
   const styles = useStyles();
   const iconBtnStyles = useSizedIconButtonStyles({
@@ -96,9 +98,14 @@ export const DeviceAdded = React.memo(function TutorCard({
 
     // instanceRef.current.render(equipos[index].content);
 
-    console.log(equipos, 'Handle');
+    console.log(equipos, 'Handle', 'index=', index);
     // setData(equipos[index].content);
-    setCurrentIndex(index);
+
+    console.log(instanceRef);
+    setOpenEditor(true);
+    indexSelectedRef.current = index;
+    // setCurrentIndex(index);
+
     // setOpenEditor(true);
     // setOpenEditor(false);
     // setOpenEditor((preval) => !preval);

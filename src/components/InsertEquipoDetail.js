@@ -10,8 +10,11 @@ import { EDITOR_JS_TOOLS } from '../assets/constants';
 import { TYPES } from './reducer/EquiposReducer';
 import ReactEditorV2 from './ReactEditorV2';
 import { TrendingUpOutlined } from '@material-ui/icons';
+import { v4 as uuidv4 } from 'uuid';
 const editorjsHTML = require('editorjs-html');
+
 const edjsParser = editorjsHTML();
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -36,9 +39,13 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   const [numeroSerieInput, setNumeroSerieInput] = useState('');
   const [nombreEquipo, setNombreEquipo] = useState('');
   const [openEditor, setOpenEditor] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(null);
   const [data, setData] = useState({});
   const firstUpdate = useRef(true);
+  const emptyRender = useRef(false);
+  const indexSelectedRef = useRef(null);
+  const classes = useStyles();
+  const [editorReady, setEditorReady] = useState(false);
   // const handleSave = React.useCallback(async () => {
   //   try {
   //     const savedData = await editorJsRef.current.save();
@@ -63,66 +70,125 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
 
   useEffect(() => {
     if (!firstUpdate.current) {
-      setOpenEditor(false);
-      console.log('INSERTEQUIPODETAIL');
+      if (openEditor !== false) {
+        console.log('OpenEditor Renedered');
+        console.log(editorJsRef.current);
+        editorJsRef.current.isReady.then(() => {
+          console.log('isReady');
+          setCurrentIndex(indexSelectedRef.current);
+        });
+      }
+    }
+  }, [openEditor]);
+
+  useEffect(() => {
+    console.log(
+      'Start UseEffect',
+      'Equipos:',
+      equipos,
+      'CurrentIndex:',
+      currentIndex
+    );
+    if (!firstUpdate.current) {
+      console.log('Inside If UseEffect');
+      setOpenEditor(true);
       console.log('reference', editorJsRef.current);
 
-      console.log(editorJsRef.current.isReady);
-      editorJsRef.current.isReady.then(() =>
-        console.log('isReady', editorJsRef.current)
-      );
+      const render = {
+        blocks: equipos[currentIndex].content.blocks
+          ? equipos[currentIndex].content.blocks
+          : [],
+      };
 
-      firstUpdate.current = false;
+      // if (render.blocks.length === 0) {
+      //   emptyRender.current = true;
+      // } else {
+      //   emptyRender.current = false;
+      // }
+
+      // editorJsRef.current.render(render);
+      // editorJsRef.current.focus(true);
+
+      if (render.blocks.length === 0) {
+        console.log('tamano 0');
+
+        editorJsRef.current.clear();
+      } else {
+        // editorJsRef.current.isReady.then()
+
+        editorJsRef.current.render(render);
+        editorJsRef.current.focus(true);
+      }
+
+      console.log(render);
     } else {
-      editorJsRef.current.isReady.then(() => {
-        editorJsRef.current.destroy();
-      });
-      setOpenEditor(true);
+      firstUpdate.current = false;
     }
-
-    // console.log(editorJsRef.current.render, equipos, currentIndex);
-    // if (!!editorJsRef.current) {
-    //   console.log(equipos[currentIndex].content, 'CONTENIDO');
-    //   const render = {
-    //     blocks: !equipos[currentIndex].content.blocks
-    //       ? []
-    //       : equipos[currentIndex].content.blocks,
-    //   };
-    //   console.log(render, 'RENDER');
-    //   // editorJsRef.current.render({
-    //   //   blocks: [
-    //   //     {
-    //   //       type: 'paragraph',
-    //   //       data: {
-    //   //         text:
-    //   //           'The example of text that was written in <b>one of popular</b> text editors.',
-    //   //       },
-    //   //     },
-    //   //     {
-    //   //       type: 'header',
-    //   //       data: {
-    //   //         text: 'With the header of course',
-    //   //         level: 2,
-    //   //       },
-    //   //     },
-    //   //     {
-    //   //       type: 'paragraph',
-    //   //       data: {
-    //   //         text: 'So what do we have?',
-    //   //       },
-    //   //     },
-    //   //   ],
-    //   // });
-    //   console.log(editorJsRef.current.render, 'What is the render funcion');
-
-    //   editorJsRef.current.render(render);
-    //   editorJsRef.current.focus(true);
-    // }
   }, [currentIndex]);
+
+  // useEffect(() => {
+  //   console.log('Use Effect Insert Equipo Detail');
+  //   if (!firstUpdate.current) {
+  //     setOpenEditor(false);
+  //     console.log('INSERTEQUIPODETAIL');
+  //     console.log('reference', editorJsRef.current);
+
+  //     console.log(editorJsRef.current.isReady);
+  //     editorJsRef.current.isReady.then(() =>
+  //       console.log('isReady', editorJsRef.current)
+  //     );
+
+  //     // firstUpdate.current = false;
+  //   } else {
+  //     editorJsRef.current.isReady.then(() => {
+  //       editorJsRef.current.destroy();
+  //     });
+  //     setOpenEditor(true);
+  //   }
+  //   firstUpdate.current = false;
+
+  //   // console.log(editorJsRef.current.render, equipos, currentIndex);
+  //   // if (!!editorJsRef.current) {
+  //   //   console.log(equipos[currentIndex].content, 'CONTENIDO');
+  //   //   const render = {
+  //   //     blocks: !equipos[currentIndex].content.blocks
+  //   //       ? []
+  //   //       : equipos[currentIndex].content.blocks,
+  //   //   };
+  //   //   console.log(render, 'RENDER');
+  //   //   // editorJsRef.current.render({
+  //   //   //   blocks: [
+  //   //   //     {
+  //   //   //       type: 'paragraph',
+  //   //   //       data: {
+  //   //   //         text:
+  //   //   //           'The example of text that was written in <b>one of popular</b> text editors.',
+  //   //   //       },
+  //   //   //     },
+  //   //   //     {
+  //   //   //       type: 'header',
+  //   //   //       data: {
+  //   //   //         text: 'With the header of course',
+  //   //   //         level: 2,
+  //   //   //       },
+  //   //   //     },
+  //   //   //     {
+  //   //   //       type: 'paragraph',
+  //   //   //       data: {
+  //   //   //         text: 'So what do we have?',
+  //   //   //       },
+  //   //   //     },
+  //   //   //   ],
+  //   //   // });
+  //   //   console.log(editorJsRef.current.render, 'What is the render funcion');
+
+  //   //   editorJsRef.current.render(render);
+  //   //   editorJsRef.current.focus(true);
+  //   // }
+  // }, [currentIndex]);
 
   const handleInsertarEquipo = () => {
     console.log('handleInsertarEquipo');
-    console.log(dispatch);
     dispatch({
       type: TYPES.add,
       payload: {
@@ -142,8 +208,6 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
       },
     });
   };
-
-  const classes = useStyles();
 
   function handleChangeReact({ name, holder, onChange }) {
     // console.log(newD)
@@ -204,7 +268,7 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
           {equipos.map((element, index) => (
             <DeviceAdded
               element={element}
-              key={index}
+              key={uuidv4()}
               index={index}
               handleDeleteEquipo={handleDeleteEquipo}
               setOpenEditor={setOpenEditor}
@@ -212,12 +276,13 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
               setData={setData}
               equipos={equipos}
               instanceRef={editorJsRef}
+              indexSelectedRef={indexSelectedRef}
             />
           ))}
         </DevicesWrapper>
 
-        {true && (
-          <EditorJsWrapper style={{ display: openEditor ? 'block' : 'none' }}>
+        {openEditor && (
+          <EditorJsWrapper>
             {/* <button onClick={handleSave}>Save !</button> */}
             {/* <EditorJs
             tools={EDITOR_JS_TOOLS}
