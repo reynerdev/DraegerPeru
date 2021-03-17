@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InsertEquipoDetail = ({ equipos, dispatch }) => {
-  const editorJsRef = React.useRef(null);
   const [numeroParteInput, setNumeroParteInput] = useState('');
   const [numeroSerieInput, setNumeroSerieInput] = useState('');
   const [nombreEquipo, setNombreEquipo] = useState('');
@@ -55,76 +54,76 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   //   }
   // }, []);
 
-  const handleOnChangeEditor = async (newData) => {
-    console.log('HandleOnChangeEditor');
-    const saveData = await newData.saver.save();
-    console.log(saveData, 'saveData');
-    dispatch({
-      type: TYPES.addText,
-      payload: {
-        index: currentIndex,
-        content: saveData,
-      },
-    });
-  };
+  // const handleOnChangeEditor = async (newData) => {
+  //   console.log('HandleOnChangeEditor');
+  //   const saveData = await newData.saver.save();
+  //   console.log(saveData, 'saveData');
+  //   dispatch({
+  //     type: TYPES.addText,
+  //     payload: {
+  //       index: currentIndex,
+  //       content: saveData,
+  //     },
+  //   });
+  // };
 
-  useEffect(() => {
-    if (!firstUpdate.current) {
-      if (openEditor !== false) {
-        console.log('OpenEditor Renedered');
-        console.log(editorJsRef.current);
-        editorJsRef.current.isReady.then(() => {
-          console.log('isReady');
-          setCurrentIndex(indexSelectedRef.current);
-        });
-      }
-    }
-  }, [openEditor]);
+  // useEffect(() => {
+  //   if (!firstUpdate.current) {
+  //     if (openEditor !== false) {
+  //       console.log('OpenEditor Renedered');
+  //       console.log(editorJsRef.current);
+  //       editorJsRef.current.isReady.then(() => {
+  //         console.log('isReady');
+  //         setCurrentIndex(indexSelectedRef.current);
+  //       });
+  //     }
+  //   }
+  // }, [openEditor]);
 
-  useEffect(() => {
-    console.log(
-      'Start UseEffect',
-      'Equipos:',
-      equipos,
-      'CurrentIndex:',
-      currentIndex
-    );
-    if (!firstUpdate.current) {
-      console.log('Inside If UseEffect');
-      setOpenEditor(true);
-      console.log('reference', editorJsRef.current);
+  // useEffect(() => {
+  //   console.log(
+  //     'Start UseEffect',
+  //     'Equipos:',
+  //     equipos,
+  //     'CurrentIndex:',
+  //     currentIndex
+  //   );
+  //   if (!firstUpdate.current) {
+  //     console.log('Inside If UseEffect');
+  //     setOpenEditor(true);
+  //     console.log('reference', editorJsRef.current);
 
-      const render = {
-        blocks: equipos[currentIndex].content.blocks
-          ? equipos[currentIndex].content.blocks
-          : [],
-      };
+  //     const render = {
+  //       blocks: equipos[currentIndex].content.blocks
+  //         ? equipos[currentIndex].content.blocks
+  //         : [],
+  //     };
 
-      // if (render.blocks.length === 0) {
-      //   emptyRender.current = true;
-      // } else {
-      //   emptyRender.current = false;
-      // }
+  //     // if (render.blocks.length === 0) {
+  //     //   emptyRender.current = true;
+  //     // } else {
+  //     //   emptyRender.current = false;
+  //     // }
 
-      // editorJsRef.current.render(render);
-      // editorJsRef.current.focus(true);
+  //     // editorJsRef.current.render(render);
+  //     // editorJsRef.current.focus(true);
 
-      if (render.blocks.length === 0) {
-        console.log('tamano 0');
+  //     if (render.blocks.length === 0) {
+  //       console.log('tamano 0');
 
-        editorJsRef.current.clear();
-      } else {
-        // editorJsRef.current.isReady.then()
+  //       editorJsRef.current.clear();
+  //     } else {
+  //       // editorJsRef.current.isReady.then()
 
-        editorJsRef.current.render(render);
-        editorJsRef.current.focus(true);
-      }
+  //       editorJsRef.current.render(render);
+  //       editorJsRef.current.focus(true);
+  //     }
 
-      console.log(render);
-    } else {
-      firstUpdate.current = false;
-    }
-  }, [currentIndex]);
+  //     console.log(render);
+  //   } else {
+  //     firstUpdate.current = false;
+  //   }
+  // }, [currentIndex]);
 
   // useEffect(() => {
   //   console.log('Use Effect Insert Equipo Detail');
@@ -275,29 +274,20 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
               setCurrentIndex={setCurrentIndex}
               setData={setData}
               equipos={equipos}
-              instanceRef={editorJsRef}
               indexSelectedRef={indexSelectedRef}
             />
           ))}
         </DevicesWrapper>
 
-        {openEditor && (
+        {/* {openEditor && (
           <EditorJsWrapper>
-            {/* <button onClick={handleSave}>Save !</button> */}
-            {/* <EditorJs
-            tools={EDITOR_JS_TOOLS}
-            // enableReInitialize={true}
-            onChange={handleOnChangeEditor}
-            onCompareBlocks={(newData, oldData) => newData === oldData} // I recommend react-fast-compare
-            data={data}
-          ></EditorJs> */}
             <ReactEditorV2
               data={data}
               handleOnChangeEditor={handleOnChangeEditor}
               instanceRef={editorJsRef}
             />
           </EditorJsWrapper>
-        )}
+        )} */}
       </MainWrapper>
     </InputDeviceWrapper>
   );

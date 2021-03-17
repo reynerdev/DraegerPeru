@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,7 +10,8 @@ import { useDynamicAvatarStyles } from '@mui-treasury/styles/avatar/dynamic';
 import Add from '@material-ui/icons/Add';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import CloseSharpIcon from '@material-ui/icons/CloseSharp';
-
+import ReactEditorV2 from './ReactEditorV2';
+import styled from 'styled-components';
 const useStyles = makeStyles(() => ({
   actionAdd: {
     backgroundColor: '#fff',
@@ -66,7 +67,6 @@ export const DeviceAdded = React.memo(function TutorCard({
   element,
   index,
   handleDeleteEquipo,
-  setOpenEditor,
   setCurrentIndex,
   equipos,
   setData,
@@ -79,6 +79,9 @@ export const DeviceAdded = React.memo(function TutorCard({
     boxShadow: '0px 3px 6px rgba(0,0,0.16)',
   });
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
+
+  const [openEditor, setOpenEditor] = useState(true);
+  const editorJsRef = React.useRef(null);
 
   const handleOpenEditor = () => {
     // setOpenEditor(true);
@@ -111,50 +114,78 @@ export const DeviceAdded = React.memo(function TutorCard({
     // setOpenEditor((preval) => !preval);
   };
   return (
-    <Row
-      p={1.5}
-      gap={2}
-      bgcolor={'#FFFF'}
-      borderRadius={16}
-      className={styles.row}
-      onClick={handleOpenEditor}
-    >
-      <Item position={'middle'} className={styles.icon}>
-        {/* <Avatar
+    <RowWrapper>
+      <Row
+        p={1.5}
+        gap={2}
+        bgcolor={'#FFFF'}
+        borderRadius={16}
+        className={styles.row}
+        onClick={handleOpenEditor}
+      >
+        <Item position={'middle'} className={styles.icon}>
+          {/* <Avatar
           classes={avatarStyles}
           src={
             'https://www.biography.com/.image/t_share/MTU0ODUwMjQ0NjIwNzI0MDAx/chris-hemsworth-poses-during-a-photo-call-for-thor-ragnarok-on-october-15-2017-in-sydney-australia-photo-by-mark-metcalfe_getty-images-for-disney-square.jpg'
           }
         /> */}
-        <SettingsCellIcon fontSize="large" />
-      </Item>
-      <Item className={styles.numberItem}>{index}</Item>
+          <SettingsCellIcon fontSize="large" />
+        </Item>
+        <Item className={styles.numberItem}>{index}</Item>
 
-      <Info position={'middle'} useStyles={useTutorInfoStyles}>
-        <InfoTitle>{element.nombreEquipo}</InfoTitle>
-        <InfoSubtitle>{element.numeroSerie}</InfoSubtitle>
-      </Info>
-      <Item ml={1} position={'middle'} className={styles.item}>
-        <IconButton
-          onClick={handleOpenEditor}
-          className={styles.actionAdd}
-          classes={iconBtnStyles}
-        >
-          <Add />
-        </IconButton>
-        <IconButton
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDeleteEquipo(index);
-          }}
-          className={styles.actionDelete}
-          classes={iconBtnStyles}
-        >
-          <CloseSharpIcon fontSize="small" />
-        </IconButton>
-      </Item>
-    </Row>
+        <Info position={'middle'} useStyles={useTutorInfoStyles}>
+          <InfoTitle>{element.nombreEquipo}</InfoTitle>
+          <InfoSubtitle>{element.numeroSerie}</InfoSubtitle>
+        </Info>
+        <Item ml={1} position={'middle'} className={styles.item}>
+          <IconButton
+            onClick={handleOpenEditor}
+            className={styles.actionAdd}
+            classes={iconBtnStyles}
+          >
+            <Add />
+          </IconButton>
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteEquipo(index);
+            }}
+            className={styles.actionDelete}
+            classes={iconBtnStyles}
+          >
+            <CloseSharpIcon fontSize="small" />
+          </IconButton>
+        </Item>
+      </Row>
+
+      {openEditor && (
+        <EditorJsWrapper>
+          <ReactEditorV2 instanceRef={editorJsRef} />
+          dasjndnaskjnasjkdnasjkdnasjkdnajkdn
+        </EditorJsWrapper>
+      )}
+    </RowWrapper>
   );
 });
 
 export default DeviceAdded;
+
+const RowWrapper = styled.div`
+  position: relative;
+  display: flex;
+`;
+
+const EditorJsWrapper = styled.div`
+  position: absolute;
+  top: 0px;
+  left: 400px;
+  background-color: white;
+  width: 400px;
+  border-radius: 16px;
+  padding: 20px;
+
+  .codex-editor .codex-editor__redactor {
+    padding-bottom: 40px;
+  }
+`;
