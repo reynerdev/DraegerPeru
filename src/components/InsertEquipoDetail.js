@@ -11,6 +11,7 @@ import { TYPES } from './reducer/EquiposReducer';
 import ReactEditorV2 from './ReactEditorV2';
 import { TrendingUpOutlined } from '@material-ui/icons';
 import { v4 as uuidv4 } from 'uuid';
+import { cleanup } from '@testing-library/react';
 const editorjsHTML = require('editorjs-html');
 
 const edjsParser = editorjsHTML();
@@ -45,6 +46,26 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   const indexSelectedRef = useRef(null);
   const classes = useStyles();
   const [editorReady, setEditorReady] = useState(false);
+  const editorJsRef = React.useRef(null);
+  //this ref se usara para tener referencia a un editorJS previo
+
+  const prevJsRef = React.useRef(null);
+
+  useEffect(() => {
+    console.log('Insert Equipo Detail Effect');
+    console.log('currentIndex:', currentIndex);
+  });
+
+  // useEffect(() => {
+  //   return () => {
+  //     console.log('InsertEquipoDetail Clean Up');
+
+  //     if (!editorJsRef.current) {
+  //       console.log(editorJsRef);
+  //     }
+  //   };
+  // }, [currentIndex]);
+
   // const handleSave = React.useCallback(async () => {
   //   try {
   //     const savedData = await editorJsRef.current.save();
@@ -272,9 +293,12 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
               handleDeleteEquipo={handleDeleteEquipo}
               setOpenEditor={setOpenEditor}
               setCurrentIndex={setCurrentIndex}
-              setData={setData}
+              currentIndex={currentIndex}
+              // setData={setData}
               equipos={equipos}
               indexSelectedRef={indexSelectedRef}
+              prevJsRef={prevJsRef}
+              dispatch={dispatch}
             />
           ))}
         </DevicesWrapper>
@@ -302,14 +326,14 @@ const InputDeviceWrapper = styled.div`
 `;
 
 const EditorJsWrapper = styled.div`
-  background-color: white;
+  /* background-color: white;
   width: 400px;
   border-radius: 16px;
   padding: 20px;
 
   .codex-editor .codex-editor__redactor {
     padding-bottom: 40px;
-  }
+  } */
 `;
 
 const MainWrapper = styled.div`

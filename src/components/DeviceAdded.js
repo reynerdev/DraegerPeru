@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,6 +12,8 @@ import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import CloseSharpIcon from '@material-ui/icons/CloseSharp';
 import ReactEditorV2 from './ReactEditorV2';
 import styled from 'styled-components';
+import { TYPES } from './reducer/EquiposReducer';
+import { EDITOR_JS_TOOLS } from '../assets/constants';
 const useStyles = makeStyles(() => ({
   actionAdd: {
     backgroundColor: '#fff',
@@ -72,6 +74,10 @@ export const DeviceAdded = React.memo(function TutorCard({
   setData,
   instanceRef,
   indexSelectedRef,
+
+  prevJsRef,
+  currentIndex,
+  dispatch,
 }) {
   const styles = useStyles();
   const iconBtnStyles = useSizedIconButtonStyles({
@@ -79,9 +85,96 @@ export const DeviceAdded = React.memo(function TutorCard({
     boxShadow: '0px 3px 6px rgba(0,0,0.16)',
   });
   const avatarStyles = useDynamicAvatarStyles({ radius: 12, size: 48 });
-
-  const [openEditor, setOpenEditor] = useState(true);
+  const [openEditor, setOpenEditor] = useState(false);
   const editorJsRef = React.useRef(null);
+  const firstUpdate = useRef(true);
+  const [isReady, setIsReady] = useState(false);
+
+  const handleOnChangeEditor = async (newData) => {
+    console.log('HandleOnChangeEditor');
+    const saveData = await newData.saver.save();
+    console.log(saveData, 'saveData');
+    dispatch({
+      type: TYPES.addText,
+      payload: {
+        index: currentIndex,
+        content: saveData,
+      },
+    });
+  };
+
+  const isEqualIndex = currentIndex === index;
+  console.log(
+    'isEqualIndex:',
+    isEqualIndex,
+    'CurrentIndex:',
+    currentIndex,
+    'Index:',
+    index
+  );
+  useEffect(() => {
+    console.log('UseEffect Device Added', editorJsRef);
+
+    if (isEqualIndex) {
+      if (currentIndex !== null) {
+        // console.log('Inside If UseEffect');
+        // setOpenEditor(true);
+        // console.log('reference', editorJsRef.current);
+
+        const render = {
+          blocks: equipos[currentIndex].content.blocks
+            ? equipos[currentIndex].content.blocks
+            : [],
+        };
+
+        console.log('EditorJsRef', editorJsRef);
+
+        editorJsRef.current.render(render);
+
+        console.log(editorJsRef);
+        // if (render.blocks.length === 0) {
+        //   emptyRender.current = true;
+        // } else {
+        //   emptyRender.current = false;
+        // }
+
+        // editorJsRef.current.focus(true);
+
+        // if (render.blocks.length === 0) {
+        //   editorJsRef.current.clear();
+        // } else {
+        //   // editorJsRef.current.isReady.then()
+
+        //   editorJsRef.current.render(render);
+        // }
+
+        console.log(render);
+      }
+    }
+  }, [currentIndex, equipos, isEqualIndex]);
+
+  // const editorJsRef = React.useRef(null);
+
+  // useEffect(() => {
+  //   console.log('%c DeviceAdded UseEffect', 'color: blues font-weight: bold');
+  //   console.log(prevJsRef, 'Status PrevJsRef', editorJsRef);
+  //   if (prevJsRef.current === null) {
+  //     console.log('InsideComparation');
+  //     prevJsRef.current = editorJsRef.current;
+  //     // console.log(prevJsRef);
+  //   } else {
+  //     //destruimos el editorJsPrevio abierto
+  //     prevJsRef.current.destroy();
+  //     console.log('Destruir Editor Js');
+  //   }
+
+  //   return () => {
+  //     console.log('%c DeviceAdded CleanUp', 'color: LightCoral', index);
+  //     console.log(openEditor, 'Open Editor Status', index);
+  //     // setOpenEditor(false);
+  //     console.log(openEditor, 'Open Editor Status', index);
+  //   };
+  // }, [openEditor, editorJsRef, prevJsRef, index]);
 
   const handleOpenEditor = () => {
     // setOpenEditor(true);
@@ -104,10 +197,9 @@ export const DeviceAdded = React.memo(function TutorCard({
     console.log(equipos, 'Handle', 'index=', index);
     // setData(equipos[index].content);
 
-    console.log(instanceRef);
-    setOpenEditor(true);
+    // setOpenEditor(true);
     indexSelectedRef.current = index;
-    // setCurrentIndex(index);
+    setCurrentIndex(index);
 
     // setOpenEditor(true);
     // setOpenEditor(false);
@@ -159,10 +251,14 @@ export const DeviceAdded = React.memo(function TutorCard({
         </Item>
       </Row>
 
-      {openEditor && (
+      {currentIndex === index && (
         <EditorJsWrapper>
-          <ReactEditorV2 instanceRef={editorJsRef} />
-          dasjndnaskjnasjkdnasjkdnasjkdnajkdn
+          <ReactEditorV2
+            instanceRef={editorJsRef}
+            holder={`editorjs-${index}`}
+            handleOnChangeEditor={handleOnChangeEditor}
+            setIsReady={setIsReady}
+          />
         </EditorJsWrapper>
       )}
     </RowWrapper>
