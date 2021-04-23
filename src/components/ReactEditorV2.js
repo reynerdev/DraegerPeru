@@ -4,38 +4,33 @@ import { EDITOR_JS_TOOLS } from '../assets/constants';
 import styled from 'styled-components';
 const isEqual = require('react-fast-compare');
 const ReactEditorV2 = ({
-  data,
-  handleOnChangeEditor,
   instanceRef,
   holder,
-  setIsReady,
+  handleOnChangeEditorCallback,
 }) => {
-  console.log('React Editor JS');
+  // const handleChange = React.useCallback(async (api) => {
+  //   const savedData = instanceRef.current.save();
+
+  //   console.log('onChange', savedData);
+  // }, []);
+
+  React.useEffect(() => {
+    console.log('InstanceRef Ready (Effect):', instanceRef);
+  });
   return (
     <EditorJs
       holder={holder}
       tools={EDITOR_JS_TOOLS}
-      enableReInitialize
+      enableReInitialize={true}
       instanceRef={(instance) => (instanceRef.current = instance)}
-      onChange={handleOnChangeEditor}
+      onChange={handleOnChangeEditorCallback}
       onCompareBlocks={(newData, oldData) => isEqual(newData, oldData)} // I recommend react-fast-compare
-      data={data}
       minHeight={30}
       autofocus={true}
-      // onReady={() => {
-      //   setIsReady(true);
-      // }}
     >
-      <InsideEditorJs id={holder} />
+      <div id={holder} />
     </EditorJs>
   );
 };
 
 export default ReactEditorV2;
-
-const InsideEditorJs = styled.div`
-  /* background-color: white; */
-  /* width: 400px; */
-  /* border-radius: 16px; */
-  /* padding: 20px; */
-`;

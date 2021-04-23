@@ -27,7 +27,7 @@ const EquiposReducer = (state, action) => {
     }
 
     case TYPES.addText: {
-      console.log('state in reducer', state);
+      console.log('state in reducer', state, action.payload.index);
       const oldState = state;
 
       oldState[action.payload.index].content = action.payload.content;

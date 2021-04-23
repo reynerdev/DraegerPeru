@@ -14,6 +14,10 @@ import ReactEditorV2 from './ReactEditorV2';
 import styled from 'styled-components';
 import { TYPES } from './reducer/EquiposReducer';
 import { EDITOR_JS_TOOLS } from '../assets/constants';
+import TesComponent from './TesComponent';
+import EditorJs from 'react-editor-js';
+
+const isEqual = require('react-fast-compare');
 const useStyles = makeStyles(() => ({
   actionAdd: {
     backgroundColor: '#fff',
@@ -66,18 +70,20 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const DeviceAdded = React.memo(function TutorCard({
-  element,
   index,
   handleDeleteEquipo,
   setCurrentIndex,
-  equipos,
-  setData,
-  instanceRef,
-  indexSelectedRef,
-
-  prevJsRef,
+  getRender,
+  setIsSaving,
+  isSaving,
+  // setData,
+  // instanceRef,
+  // indexSelectedRef,
+  // setTest,
+  test,
+  // prevJsRef,
   currentIndex,
-  dispatch,
+  save,
 }) {
   const styles = useStyles();
   const iconBtnStyles = useSizedIconButtonStyles({
@@ -88,19 +94,23 @@ export const DeviceAdded = React.memo(function TutorCard({
   const [openEditor, setOpenEditor] = useState(false);
   const editorJsRef = React.useRef(null);
   const firstUpdate = useRef(true);
-  const [isReady, setIsReady] = useState(false);
+
+  const handleOnChangeEditorCallback = React.useCallback(
+    async (newData) => {
+      console.log('HandleOnChangeEditor');
+
+      const saveData = await newData.saver.save();
+      save(saveData);
+    },
+    [save]
+  );
 
   const handleOnChangeEditor = async (newData) => {
     console.log('HandleOnChangeEditor');
     const saveData = await newData.saver.save();
     console.log(saveData, 'saveData');
-    dispatch({
-      type: TYPES.addText,
-      payload: {
-        index: currentIndex,
-        content: saveData,
-      },
-    });
+
+    save(saveData);
   };
 
   const isEqualIndex = currentIndex === index;
@@ -113,97 +123,34 @@ export const DeviceAdded = React.memo(function TutorCard({
     index
   );
   useEffect(() => {
-    console.log('UseEffect Device Added', editorJsRef);
+    console.log('DeviceAdded UseEffect', 'index', index);
 
     if (isEqualIndex) {
       if (currentIndex !== null) {
-        // console.log('Inside If UseEffect');
-        // setOpenEditor(true);
-        // console.log('reference', editorJsRef.current);
+        const render = getRender();
+        console.log('Render', render.blocks);
+        // id = setTimeout(() => {
+        //   console.log('EditorJsRef Set Time Out', editorJsRef);
 
-        const render = {
-          blocks: equipos[currentIndex].content.blocks
-            ? equipos[currentIndex].content.blocks
-            : [],
-        };
+        editorJsRef.current.isReady.then(() => {
+          // Si lo que obtenemos en getRender me retorno un block vacio, no realizo nada y dejo que se cargue el editor js como nuevo. En todo caso
+          // retorno
+          if (render.blocks.length !== 0) {
+            console.log('Block Empty');
+            editorJsRef.current.render(render);
+          }
 
-        console.log('EditorJsRef', editorJsRef);
+          console.log('EditorJsRef', editorJsRef);
 
-        editorJsRef.current.render(render);
-
-        console.log(editorJsRef);
-        // if (render.blocks.length === 0) {
-        //   emptyRender.current = true;
-        // } else {
-        //   emptyRender.current = false;
-        // }
-
-        // editorJsRef.current.focus(true);
-
-        // if (render.blocks.length === 0) {
-        //   editorJsRef.current.clear();
-        // } else {
-        //   // editorJsRef.current.isReady.then()
-
-        //   editorJsRef.current.render(render);
-        // }
-
-        console.log(render);
+          console.log('EditorJsRef After Clear', editorJsRef);
+        });
       }
     }
-  }, [currentIndex, equipos, isEqualIndex]);
-
-  // const editorJsRef = React.useRef(null);
-
-  // useEffect(() => {
-  //   console.log('%c DeviceAdded UseEffect', 'color: blues font-weight: bold');
-  //   console.log(prevJsRef, 'Status PrevJsRef', editorJsRef);
-  //   if (prevJsRef.current === null) {
-  //     console.log('InsideComparation');
-  //     prevJsRef.current = editorJsRef.current;
-  //     // console.log(prevJsRef);
-  //   } else {
-  //     //destruimos el editorJsPrevio abierto
-  //     prevJsRef.current.destroy();
-  //     console.log('Destruir Editor Js');
-  //   }
-
-  //   return () => {
-  //     console.log('%c DeviceAdded CleanUp', 'color: LightCoral', index);
-  //     console.log(openEditor, 'Open Editor Status', index);
-  //     // setOpenEditor(false);
-  //     console.log(openEditor, 'Open Editor Status', index);
-  //   };
-  // }, [openEditor, editorJsRef, prevJsRef, index]);
+  }, [currentIndex, getRender, isEqualIndex]);
 
   const handleOpenEditor = () => {
-    // setOpenEditor(true);
-
-    // if (!instanceRef.current){
-
-    // }
-
-    // setOpenEditor((state) => {
-    //   instanceRef.current.render(equipos[index].content);
-
-    //   return true;
-    // });
-    // if (instanceRef.current) {
-    //   instanceRef.current.destroy();
-    // }
-
-    // instanceRef.current.render(equipos[index].content);
-
-    console.log(equipos, 'Handle', 'index=', index);
-    // setData(equipos[index].content);
-
-    // setOpenEditor(true);
-    indexSelectedRef.current = index;
+    console.log('Handle Open Editor', 'index=', index);
     setCurrentIndex(index);
-
-    // setOpenEditor(true);
-    // setOpenEditor(false);
-    // setOpenEditor((preval) => !preval);
   };
   return (
     <RowWrapper>
@@ -227,8 +174,8 @@ export const DeviceAdded = React.memo(function TutorCard({
         <Item className={styles.numberItem}>{index}</Item>
 
         <Info position={'middle'} useStyles={useTutorInfoStyles}>
-          <InfoTitle>{element.nombreEquipo}</InfoTitle>
-          <InfoSubtitle>{element.numeroSerie}</InfoSubtitle>
+          <InfoTitle>dasd</InfoTitle>
+          <InfoSubtitle>sadasd</InfoSubtitle>
         </Info>
         <Item ml={1} position={'middle'} className={styles.item}>
           <IconButton
@@ -256,8 +203,7 @@ export const DeviceAdded = React.memo(function TutorCard({
           <ReactEditorV2
             instanceRef={editorJsRef}
             holder={`editorjs-${index}`}
-            handleOnChangeEditor={handleOnChangeEditor}
-            setIsReady={setIsReady}
+            handleOnChangeEditorCallback={handleOnChangeEditorCallback}
           />
         </EditorJsWrapper>
       )}

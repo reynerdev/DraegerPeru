@@ -4,14 +4,12 @@ import TextField from '@material-ui/core/TextField';
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import YellowButton from './YellowButton';
-import DeviceAdded from './DeviceAdded';
-import EditorJs from 'react-editor-js';
-import { EDITOR_JS_TOOLS } from '../assets/constants';
+
 import { TYPES } from './reducer/EquiposReducer';
-import ReactEditorV2 from './ReactEditorV2';
 import { TrendingUpOutlined } from '@material-ui/icons';
 import { v4 as uuidv4 } from 'uuid';
 import { cleanup } from '@testing-library/react';
+import ListDeviceAdded from './ListDeviceAdded';
 const editorjsHTML = require('editorjs-html');
 
 const edjsParser = editorjsHTML();
@@ -34,12 +32,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InsertEquipoDetail = ({ equipos, dispatch }) => {
+const InsertEquipoDetail = React.memo(({ equipos, dispatch }) => {
   const [numeroParteInput, setNumeroParteInput] = useState('');
   const [numeroSerieInput, setNumeroSerieInput] = useState('');
   const [nombreEquipo, setNombreEquipo] = useState('');
   const [openEditor, setOpenEditor] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(null);
   const [data, setData] = useState({});
   const firstUpdate = useRef(true);
   const emptyRender = useRef(false);
@@ -47,165 +44,13 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
   const classes = useStyles();
   const [editorReady, setEditorReady] = useState(false);
   const editorJsRef = React.useRef(null);
-  //this ref se usara para tener referencia a un editorJS previo
 
   const prevJsRef = React.useRef(null);
 
   useEffect(() => {
     console.log('Insert Equipo Detail Effect');
-    console.log('currentIndex:', currentIndex);
+    // console.log('currentIndex:', currentIndex);
   });
-
-  // useEffect(() => {
-  //   return () => {
-  //     console.log('InsertEquipoDetail Clean Up');
-
-  //     if (!editorJsRef.current) {
-  //       console.log(editorJsRef);
-  //     }
-  //   };
-  // }, [currentIndex]);
-
-  // const handleSave = React.useCallback(async () => {
-  //   try {
-  //     const savedData = await editorJsRef.current.save();
-  //     console.log('data', edjsParser.parse(savedData));
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }, []);
-
-  // const handleOnChangeEditor = async (newData) => {
-  //   console.log('HandleOnChangeEditor');
-  //   const saveData = await newData.saver.save();
-  //   console.log(saveData, 'saveData');
-  //   dispatch({
-  //     type: TYPES.addText,
-  //     payload: {
-  //       index: currentIndex,
-  //       content: saveData,
-  //     },
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (!firstUpdate.current) {
-  //     if (openEditor !== false) {
-  //       console.log('OpenEditor Renedered');
-  //       console.log(editorJsRef.current);
-  //       editorJsRef.current.isReady.then(() => {
-  //         console.log('isReady');
-  //         setCurrentIndex(indexSelectedRef.current);
-  //       });
-  //     }
-  //   }
-  // }, [openEditor]);
-
-  // useEffect(() => {
-  //   console.log(
-  //     'Start UseEffect',
-  //     'Equipos:',
-  //     equipos,
-  //     'CurrentIndex:',
-  //     currentIndex
-  //   );
-  //   if (!firstUpdate.current) {
-  //     console.log('Inside If UseEffect');
-  //     setOpenEditor(true);
-  //     console.log('reference', editorJsRef.current);
-
-  //     const render = {
-  //       blocks: equipos[currentIndex].content.blocks
-  //         ? equipos[currentIndex].content.blocks
-  //         : [],
-  //     };
-
-  //     // if (render.blocks.length === 0) {
-  //     //   emptyRender.current = true;
-  //     // } else {
-  //     //   emptyRender.current = false;
-  //     // }
-
-  //     // editorJsRef.current.render(render);
-  //     // editorJsRef.current.focus(true);
-
-  //     if (render.blocks.length === 0) {
-  //       console.log('tamano 0');
-
-  //       editorJsRef.current.clear();
-  //     } else {
-  //       // editorJsRef.current.isReady.then()
-
-  //       editorJsRef.current.render(render);
-  //       editorJsRef.current.focus(true);
-  //     }
-
-  //     console.log(render);
-  //   } else {
-  //     firstUpdate.current = false;
-  //   }
-  // }, [currentIndex]);
-
-  // useEffect(() => {
-  //   console.log('Use Effect Insert Equipo Detail');
-  //   if (!firstUpdate.current) {
-  //     setOpenEditor(false);
-  //     console.log('INSERTEQUIPODETAIL');
-  //     console.log('reference', editorJsRef.current);
-
-  //     console.log(editorJsRef.current.isReady);
-  //     editorJsRef.current.isReady.then(() =>
-  //       console.log('isReady', editorJsRef.current)
-  //     );
-
-  //     // firstUpdate.current = false;
-  //   } else {
-  //     editorJsRef.current.isReady.then(() => {
-  //       editorJsRef.current.destroy();
-  //     });
-  //     setOpenEditor(true);
-  //   }
-  //   firstUpdate.current = false;
-
-  //   // console.log(editorJsRef.current.render, equipos, currentIndex);
-  //   // if (!!editorJsRef.current) {
-  //   //   console.log(equipos[currentIndex].content, 'CONTENIDO');
-  //   //   const render = {
-  //   //     blocks: !equipos[currentIndex].content.blocks
-  //   //       ? []
-  //   //       : equipos[currentIndex].content.blocks,
-  //   //   };
-  //   //   console.log(render, 'RENDER');
-  //   //   // editorJsRef.current.render({
-  //   //   //   blocks: [
-  //   //   //     {
-  //   //   //       type: 'paragraph',
-  //   //   //       data: {
-  //   //   //         text:
-  //   //   //           'The example of text that was written in <b>one of popular</b> text editors.',
-  //   //   //       },
-  //   //   //     },
-  //   //   //     {
-  //   //   //       type: 'header',
-  //   //   //       data: {
-  //   //   //         text: 'With the header of course',
-  //   //   //         level: 2,
-  //   //   //       },
-  //   //   //     },
-  //   //   //     {
-  //   //   //       type: 'paragraph',
-  //   //   //       data: {
-  //   //   //         text: 'So what do we have?',
-  //   //   //       },
-  //   //   //     },
-  //   //   //   ],
-  //   //   // });
-  //   //   console.log(editorJsRef.current.render, 'What is the render funcion');
-
-  //   //   editorJsRef.current.render(render);
-  //   //   editorJsRef.current.focus(true);
-  //   // }
-  // }, [currentIndex]);
 
   const handleInsertarEquipo = () => {
     console.log('handleInsertarEquipo');
@@ -219,6 +64,18 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
       },
     });
   };
+
+  const handleDeleteEquipoCallback = React.useCallback(
+    (index) => {
+      dispatch({
+        type: TYPES.remove,
+        payload: {
+          index: index,
+        },
+      });
+    },
+    [dispatch]
+  );
 
   const handleDeleteEquipo = (index) => {
     dispatch({
@@ -284,23 +141,29 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
       </form>
       <button onClick={handleInsertarEquipo}>click</button>
       <MainWrapper>
-        <DevicesWrapper>
+        {/* <DevicesWrapper>
           {equipos.map((element, index) => (
             <DeviceAdded
-              element={element}
               key={uuidv4()}
               index={index}
-              handleDeleteEquipo={handleDeleteEquipo}
-              setOpenEditor={setOpenEditor}
+              handleDeleteEquipo={handleDeleteEquipoCallback}
               setCurrentIndex={setCurrentIndex}
               currentIndex={currentIndex}
               // setData={setData}
-              equipos={equipos}
+              test={test}
+              setTest={setTest}
+              // equipos={equipos}
+              getRender={getRenderCallback}
+              save={saveDataCallback}
               indexSelectedRef={indexSelectedRef}
               prevJsRef={prevJsRef}
               dispatch={dispatch}
             />
           ))}
+        </DevicesWrapper> */}
+
+        <DevicesWrapper>
+          <ListDeviceAdded dispatch={dispatch} equipos={equipos} />
         </DevicesWrapper>
 
         {/* {openEditor && (
@@ -315,7 +178,7 @@ const InsertEquipoDetail = ({ equipos, dispatch }) => {
       </MainWrapper>
     </InputDeviceWrapper>
   );
-};
+});
 
 export default InsertEquipoDetail;
 
@@ -323,17 +186,6 @@ const InputDeviceWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-`;
-
-const EditorJsWrapper = styled.div`
-  /* background-color: white;
-  width: 400px;
-  border-radius: 16px;
-  padding: 20px;
-
-  .codex-editor .codex-editor__redactor {
-    padding-bottom: 40px;
-  } */
 `;
 
 const MainWrapper = styled.div`
