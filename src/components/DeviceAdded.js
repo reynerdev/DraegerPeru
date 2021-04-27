@@ -83,6 +83,7 @@ export const DeviceAdded = React.memo(function TutorCard({
   test,
   // prevJsRef,
   currentIndex,
+  setBlockClicked,
   save,
 }) {
   const styles = useStyles();
@@ -98,19 +99,27 @@ export const DeviceAdded = React.memo(function TutorCard({
   const handleOnChangeEditorCallback = React.useCallback(
     async (newData) => {
       console.log('HandleOnChangeEditor');
-
+      setBlockClicked(true);
       const saveData = await newData.saver.save();
+      console.log('saveData');
       save(saveData);
+      setTimeout(() => {
+        setBlockClicked(false);
+      }, 100);
     },
     [save]
   );
 
   const handleOnChangeEditor = async (newData) => {
-    console.log('HandleOnChangeEditor');
-    const saveData = await newData.saver.save();
-    console.log(saveData, 'saveData');
-
-    save(saveData);
+    try {
+      console.log('HandleOnChangeEditor');
+      const saveData = await newData.saver.save();
+      // setBlockClicked(false);
+      save(saveData);
+      // setBlockClicked(false);
+    } catch (error) {
+      console.log('ERROR', error);
+    }
   };
 
   const isEqualIndex = currentIndex === index;

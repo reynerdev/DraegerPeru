@@ -5,7 +5,7 @@ import { TYPES } from './reducer/EquiposReducer';
 
 // We create this intermediate List in order to avoid re-rendering
 
-const ListDeviceAdded = React.memo(({ equipos, dispatch }) => {
+const ListDeviceAdded = React.memo(({ equipos, dispatch, setBlockClicked }) => {
   useEffect(() => {
     console.log('ListDevice');
   });
@@ -59,6 +59,7 @@ const ListDeviceAdded = React.memo(({ equipos, dispatch }) => {
           handleDeleteEquipo={handleDeleteEquipo}
           setIsSaving={setIsSaving}
           isSaving={isSaving}
+          setBlockClicked={setBlockClicked}
           // indexSelectedRef={indexSelectedRef}
           // prevJsRef={prevJsRef}
           // dispatch={dispatch}

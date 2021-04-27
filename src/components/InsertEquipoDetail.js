@@ -44,13 +44,18 @@ const InsertEquipoDetail = React.memo(({ equipos, dispatch }) => {
   const classes = useStyles();
   const [editorReady, setEditorReady] = useState(false);
   const editorJsRef = React.useRef(null);
-
+  const [blockClicked, setBlockClicked] = useState(false);
   const prevJsRef = React.useRef(null);
 
   useEffect(() => {
     console.log('Insert Equipo Detail Effect');
     // console.log('currentIndex:', currentIndex);
   });
+
+  useEffect(() => {
+    console.log('Block Clicked', blockClicked);
+    // console.log('currentIndex:', currentIndex);
+  }, [blockClicked]);
 
   const handleInsertarEquipo = () => {
     console.log('handleInsertarEquipo');
@@ -163,7 +168,14 @@ const InsertEquipoDetail = React.memo(({ equipos, dispatch }) => {
         </DevicesWrapper> */}
 
         <DevicesWrapper>
-          <ListDeviceAdded dispatch={dispatch} equipos={equipos} />
+          <ListDeviceAdded
+            dispatch={dispatch}
+            equipos={equipos}
+            setBlockClicked={setBlockClicked}
+          />
+          <DisableList
+            style={{ display: blockClicked ? 'block' : 'none' }}
+          ></DisableList>
         </DevicesWrapper>
 
         {/* {openEditor && (
@@ -195,5 +207,17 @@ const MainWrapper = styled.div`
 `;
 
 const DevicesWrapper = styled.div`
+  position: absolute;
   margin-right: 48px;
+  z-index: 1;
+`;
+
+const DisableList = styled.div`
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 50px;
+  background-color: black;
+  opacity: 0.3;
+  z-index: 2;
 `;
